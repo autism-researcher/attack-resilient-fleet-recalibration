@@ -1,0 +1,42 @@
+{
+  "0.10": {
+    "equipped": 4,
+    "rate_err_P5": 0.014369901099774419,
+    "latency_P5": 323.325,
+    "under_max_P5": 0.03269450664006952,
+    "rate_err_B1_local": 0.020889169901129358,
+    "within_bound": true
+  },
+  "0.25": {
+    "equipped": 10,
+    "rate_err_P5": 0.013775418050324858,
+    "latency_P5": 320.86,
+    "under_max_P5": 0.032045099691515824,
+    "rate_err_B1_local": 0.02108874861016919,
+    "within_bound": true
+  },
+  "0.50": {
+    "equipped": 20,
+    "rate_err_P5": 0.013898999751184235,
+    "latency_P5": 327.04,
+    "under_max_P5": 0.032260701218406705,
+    "rate_err_B1_local": 0.021168485136636387,
+    "within_bound": true
+  },
+  "0.75": {
+    "equipped": 30,
+    "rate_err_P5": 0.013721488157289458,
+    "latency_P5": 318.36,
+    "under_max_P5": 0.032240673502696646,
+    "rate_err_B1_local": 0.021060496562997966,
+    "within_bound": true
+  },
+  "1.00": {
+    "equipped": 40,
+    "rate_err_P5": 0.013806380548285573,
+    "latency_P5": 317.4575,
+    "under_max_P5": 0.03214881189833764,
+    "rate_err_B1_local": 0.02086792034410113,
+    "within_bound": true
+  }
+}

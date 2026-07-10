@@ -1,0 +1,10 @@
+{
+  "P5_vs_B1_rate_err": {
+    "mean_diff_B1_minus_P5": 0.009780579040122864,
+    "p": 5e-05
+  },
+  "P5_under_adv_minus_honest": {
+    "mean_diff": 5.97679322118079e-05,
+    "p": 0.109
+  }
+}
