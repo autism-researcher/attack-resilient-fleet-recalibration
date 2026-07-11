@@ -1,0 +1,50 @@
+{
+  "tau0.1_Ns300": {
+    "tau": 0.1,
+    "Ns": 300,
+    "delta": 0.0666,
+    "cert": 0.0997,
+    "obs": 0.032,
+    "within": true
+  },
+  "tau0.05_Ns300": {
+    "tau": 0.05,
+    "Ns": 300,
+    "delta": 0.0566,
+    "cert": 0.4028,
+    "obs": 0.073,
+    "within": true
+  },
+  "tau0.02_Ns300": {
+    "tau": 0.02,
+    "Ns": 300,
+    "delta": 0.0476,
+    "cert": 0.3504,
+    "obs": 0.123,
+    "within": true
+  },
+  "tau0.01_Ns300": {
+    "tau": 0.01,
+    "Ns": 300,
+    "delta": 0.0435,
+    "cert": 0.3117,
+    "obs": 0.161,
+    "within": true
+  },
+  "tau0.01_Ns1200": {
+    "tau": 0.01,
+    "Ns": 1200,
+    "delta": 0.0141,
+    "cert": 0.3117,
+    "obs": 0.126,
+    "within": true
+  },
+  "tau0.005_Ns2400": {
+    "tau": 0.005,
+    "Ns": 2400,
+    "delta": 0.0071,
+    "cert": 0.2723,
+    "obs": 0.127,
+    "within": true
+  }
+}

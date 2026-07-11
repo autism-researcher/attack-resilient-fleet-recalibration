@@ -1,0 +1,51 @@
+{
+  "delta_step": 0.066636688637034,
+  "v_binding_step": 0.13886890263711815,
+  "laws": {
+    "highd": {
+      "n": 5000,
+      "KT": 34000,
+      "delta_sim": 0.16715495013509124,
+      "env_step": 0.0699,
+      "env_sim": 0.3132,
+      "omega_step": 0.0399,
+      "omega_sim": 0.2832
+    },
+    "ngsim": {
+      "n": 5000,
+      "KT": 34000,
+      "delta_sim": 0.16715495013509124,
+      "env_step": 0.0654,
+      "env_sim": 0.119,
+      "omega_step": 0.0354,
+      "omega_sim": 0.089
+    },
+    "waymo": {
+      "n": 5000,
+      "KT": 34000,
+      "delta_sim": 0.16715495013509124,
+      "env_step": 0.1103,
+      "env_sim": 0.3031,
+      "omega_step": 0.0803,
+      "omega_sim": 0.2731
+    },
+    "controlled": {
+      "n": 734760,
+      "KT": 34000,
+      "delta_sim": 0.16715495013509124,
+      "env_step": 0.0997,
+      "env_sim": 0.4217,
+      "omega_step": 0.0697,
+      "omega_sim": 0.3917
+    },
+    "closed": {
+      "n": 647180,
+      "KT": 60000,
+      "delta_sim": 0.17189011619950428,
+      "env_step": 0.0414,
+      "env_sim": 0.2676,
+      "omega_step": 0.0114,
+      "omega_sim": 0.2376
+    }
+  }
+}

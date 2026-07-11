@@ -18,7 +18,7 @@ pip install -r requirements.txt
 The controlled study runs entirely on the built-in NGSIM-calibrated *generator* (synthetic streams with a known ground-truth boundary), so readers without licensed data can reproduce the core safety result end-to-end:
 ```bash
 pip install -r requirements.txt
-python experiments.py --seeds 5 --only C      # Experiment C: naive fleet-clamp breaches; local clamp holds
+python experiments.py --seeds 5 --only C      # Experiment C: naive fleet-clamp's under-protection is larger; local clamp holds
 python make_figures_bw.py                      # rebuilds the figures from committed JSON
 ```
 No highD/NGSIM/Waymo download is needed for this path; the real-corpus studies additionally use the derived `real/*.npy` pools already included.
@@ -36,6 +36,28 @@ python make_figures_bw.py
 ```
 All headline numbers are written to committed JSON files, so figures/tables can be
 rebuilt without re-running the (stochastic) experiments.
+
+## Finite-sample certificates (`certificates.py`)
+`certificates.py` is the authoritative computation of the per-vehicle under-protection
+certificates. It recomputes, from the committed pools/generators, the corrected
+concentration constant and the per-step and run-level (simultaneous) envelopes reported
+in the paper:
+```bash
+python certificates.py        # -> results_real/certificates.json
+```
+The concentration analysis was corrected in the TR-C revision: (i) the two-sided
+Bernstein/Freedman deviation uses the **binding lower-tail variance**
+`v(delta) = (p-delta)(1-p+delta)` for `p = 1-tau >= 1/2` (the lower tail is nearer 1/2,
+so `q(1-q) > p(1-p)`), giving `delta = 0.067` (was 0.055); and (ii) the adapted
+(martingale) case evaluates the empirical CDF at the two fixed bracketing quantile
+levels only — **no score grid** — with predictable variance bounded by Jensen concavity.
+The quantile modulus `omega_F` is computed exactly from each realized law. Run-level
+maxima are compared to the simultaneous certificate (`alpha -> alpha/(KT)`), not the
+per-step envelope. These certificates are conservative worst-case guarantees, not tight
+operational margins; the observed under-protection is several-fold smaller.
+Corrected per-step / simultaneous envelopes: controlled 0.100 / 0.422; highD 0.070 / 0.313;
+NGSIM 0.065 / 0.119; Waymo 0.110 / 0.303; closed-loop 0.041 / 0.268.
+`exp_o_cert.py` computes the rare-event (low-tau) tail certificates of Experiment O.
 
 ## Reviewer-strengthening experiments (TR-C revision)
 One command reproduces every new table — component ablation (which part secures safety),
@@ -59,9 +81,9 @@ New scripts:
 Outputs: `results_real/reviewer_ablation.json`, `reviewer_waymo_holdout.json`,
 `reviewer_closedloop.json`.
 
-Key real findings: the **local clamp** secures safety (removing it — ACI — breaches
-under-protection to 2.2× the bound; every clamp variant holds at 0.037–0.038 regardless
-of aggregator); under-protection is statistically **flat across 0–70% adversarial
+Key real findings: the **local clamp** secures safety (removing it — ACI — raises
+under-protection to ~3× the clamp-based scheme and outside the guarantee's scope; every
+clamp variant holds at 0.037–0.038 regardless of aggregator); under-protection is statistically **flat across 0–70% adversarial
 uploads**; P5 holds the bound under delay to 1 s, loss to 40%, stale, Byzantine, and
 mixed faults.
 

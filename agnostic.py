@@ -65,9 +65,9 @@ for name,score in SCORES.items():
         re_b1.append(rate_err(simulate("B1",R,Bs,tc,p,gen.rng),shift,p))
         lp=simulate("P5",R,Bs,tc,p,gen.rng); re_p5.append(rate_err(lp,shift,p)); um_h.append(under_max(lp,shift))
         la=simulate("P5",R,Bs,tc,p,gen.rng,adv_mask=adv,adv_offset=ADV_OFF); um_a.append(under_max(la,shift))
-    # proven bound estimate (same formula as experiments.theoretical_bound)
-    pre=R[:,:tc].ravel(); q=np.quantile(pre,1-p.tau); band=0.03
-    fmin=max(((np.abs(pre-q)<band).mean())/(2*band),0.3); bound=p.m+(1/fmin)*np.sqrt(np.log(2/0.05)/(2*p.N_s))+0.01
+    # corrected per-step certificate (same as experiments.theoretical_bound)
+    import experiments as _E
+    bound=_E.theoretical_bound(R,tc,p)
     out[name]=dict(rate_err_B1=float(np.mean(re_b1)),rate_err_P5=float(np.mean(re_p5)),
                    under_honest=float(np.mean(um_h)),under_adv=float(np.mean(um_a)),bound=float(bound))
     o=out[name]

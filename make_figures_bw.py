@@ -40,7 +40,7 @@ def figC(src,out,title):
             m,ye=ci(d[g][key]); ax.bar(x[i]+off,m,w,yerr=ye,capsize=3,edgecolor="black",linewidth=0.8,
                 error_kw=dict(ecolor="black",lw=1),label=lab if i==0 else None,**st)
     b=d["theoretical_bound"][0]
-    ax.axhline(b,ls=(0,(6,4)),color="#333333",lw=2,label=f"proven bound = {b:.3f}")
+    ax.axhline(b,ls=(0,(6,4)),color="#333333",lw=2,label=f"certified bound = {b:.3f}")
     ax.set_xticks(x); ax.set_xticklabels(glab); ax.set_ylabel(r"max under-protection $(B^{eff}-B^\star)_+$")
     ax.set_title(title); ax.grid(axis="y",alpha=0.35); ax.legend(fontsize=9)
     fig.tight_layout(); fig.savefig(os.path.join(OUT,out),dpi=150); plt.close(fig)
@@ -70,8 +70,8 @@ def figClosed(out):
     xt=["ideal\n(0 ms, 0%)","300 ms\n20% loss","1000 ms\n50% loss"]; x=range(3)
     up=[v[k]["under_max"][0] for k in vk]; co=[v[k]["coll"][0] for k in vk]
     a=ax[1]; a.plot(x,up,"-o",color="black",lw=1.8,markersize=7,markerfacecolor="white",label="max under-protection")
-    a.axhline(0.12,ls=":",color="#888888",lw=1.4,label=r"proven bound $\approx0.12$")
-    a.set_ylim(0,0.16); a.set_ylabel("worst-case under-protection"); a.set_xticks(list(x)); a.set_xticklabels(xt)
+    a.axhline(0.268,ls=":",color="#888888",lw=1.4,label=r"run-level certificate $\approx0.27$")
+    a.set_ylim(0,0.30); a.set_ylabel("worst-case under-protection"); a.set_xticks(list(x)); a.set_xticklabels(xt)
     a.set_title("P5 under V2X latency / packet loss"); a.grid(alpha=0.3)
     a2=a.twinx(); a2.plot(x,co,"--s",color="#555555",lw=1.8,markersize=7,markerfacecolor="white",label="collisions / 1000")
     a2.set_ylim(0,0.6); a2.set_ylabel("collisions / 1000 veh-steps")
@@ -137,7 +137,7 @@ def figLDP(out="privacy_utility.png"):
         um=[d[Kk][ekeys[e]]["under_max"] for e in eps]
         ax[1].plot(eps,um,ls=ls,marker=mk,color="black",lw=1.7,markersize=7,markerfacecolor="white",label=lab)
     bnds=[d[Kk][ekeys[e]]["bound"] for Kk,_,_,_ in styles for e in eps]
-    ax[1].axhline(max(bnds),ls=":",color="#888888",lw=1.4,label=f"proven bound $\\approx${max(bnds):.3f}")
+    ax[1].axhline(max(bnds),ls=":",color="#888888",lw=1.4,label=f"certified bound $\\approx${max(bnds):.3f}")
     ax[1].set_ylim(0,max(bnds)*1.25); ax[1].set_xlabel(r"LDP budget $\varepsilon_0$"); ax[1].set_ylabel(r"worst-case under-protection $(B^{eff}-B^\star)_+$")
     ax[1].set_title("(b) Safety holds under privacy noise"); ax[1].grid(alpha=0.3); ax[1].legend(fontsize=8); ax[1].invert_xaxis()
     fig.tight_layout(); fig.savefig(os.path.join(OUT,out),dpi=150); plt.close(fig)

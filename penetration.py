@@ -22,7 +22,7 @@ def metrics_for(Keq, seeds=SEEDS, seed0=55):
         ux.append(np.mean(mP["under_max"])); reB.append(np.mean(mB["rate_err"]))
     return (float(np.mean(re)),float(np.mean(lat)),float(np.mean(ux)),float(np.mean(reB)))
 
-bound=0.055
+bound=0.100
 out={}
 print(f"penetration | equipped peers | P5 rate_err | P5 latency | P5 under_max (bound {bound}) | B1 rate_err")
 for pen in [0.10,0.25,0.50,0.75,1.00]:

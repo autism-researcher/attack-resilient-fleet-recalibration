@@ -64,10 +64,25 @@ def boot_ci(x, nboot=2000, seed=0):
     bs = [rng.choice(x, len(x), replace=True).mean() for _ in range(nboot)]
     return [float(x.mean()), float(np.percentile(bs, 2.5)), float(np.percentile(bs, 97.5))]
 
-def theoretical_bound(R, t_cal, p, alpha=0.05):
-    pre = R[:, :t_cal].ravel(); q = np.quantile(pre, 1 - p.tau); band = 0.03
-    fmin = max(((np.abs(pre - q) < band).mean()) / (2 * band), 0.3)
-    return p.m + (1.0 / fmin) * np.sqrt(np.log(2 / alpha) / (2 * p.N_s)) + 0.01
+def theoretical_bound(R, t_cal, p, alpha=0.05, rho=0.01):
+    # Corrected per-step certificate: m + omega_F(delta) + rho.
+    # delta = binding-tail two-sided Bernstein fixed point (lower tail q=1-tau-delta
+    # is binding for 1-tau>=1/2, so variance = (P-d)(1-P+d), NOT P(1-P)).
+    # omega_F = exact quantile modulus of the (post-shift) faced law at level P=1-tau.
+    import math
+    P = 1 - p.tau; L = math.log(2.0 / alpha); Ns = p.N_s
+    d = 0.05
+    for _ in range(300):
+        v = max((P - d) * (1 - P + d), (P + d) * (1 - P - d))
+        d2 = math.sqrt(2 * v * L / Ns) + (2.0 / 3.0) * L / Ns
+        if abs(d2 - d) < 1e-13:
+            d = d2; break
+        d = d2
+    law = np.sort(R[:, t_cal:].ravel())  # post-shift faced law
+    n = len(law)
+    def gi(qq): return law[min(max(int(math.ceil(qq * n)) - 1, 0), n - 1)]
+    omega = max(gi(min(P + d, 1.0)) - gi(P), gi(P) - gi(max(P - d, 0.0)))
+    return float(p.m + omega + rho)
 
 def _save(n, o):
     with open(os.path.join(RES, f"{n}.json"), "w") as f: json.dump(o, f, indent=2)
@@ -150,7 +165,7 @@ def _figC(C):
     for off,key,lab,col,hatch in [(-w/2,"honest","honest fleet","#6fa8dc",None),(w/2,"adv","30% adversarial uploads","#e69138","//")]:
         m=[C[c][key][0] for c in conds]; lo=[C[c][key][0]-C[c][key][1] for c in conds]; hi=[C[c][key][2]-C[c][key][0] for c in conds]
         ax.bar(x+off,m,w,yerr=[lo,hi],capsize=3,label=lab,color=col,hatch=hatch,edgecolor="black",linewidth=.4)
-    b=C["theoretical_bound"][0]; ax.axhline(b,ls="--",color="#b8860b",label=f"proven bound = {b:.3f}")
+    b=C["theoretical_bound"][0]; ax.axhline(b,ls="--",color="#b8860b",label=f"certified bound = {b:.3f}")
     ax.set_xticks(x); ax.set_xticklabels(["B1 local","B2 naive","P5 fleet"]); ax.set_ylabel("max under-protection (B_eff-B*)+")
     ax.legend(fontsize=8); ax.set_title("Experiment C - safety under adversarial fleet uploads"); ax.grid(axis="y",alpha=0.3)
     fig.tight_layout(); fig.savefig(os.path.join(FIG, "expC_underprotection.png"), dpi=140); plt.close(fig)
@@ -188,15 +203,4 @@ def _print(s):
 
 if __name__ == "__main__":
     warnings.filterwarnings("ignore")
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--seeds", type=int, default=20); ap.add_argument("--only", type=str, default="all"); ap.add_argument("--ngsim", type=str, default=None)
-    a = ap.parse_args()
-    if a.ngsim:
-        from data import load_ngsim; d = load_ngsim(a.ngsim); print("Loaded REAL NGSIM streams:", sum(len(v) for v in d.values()))
-    import time; t0 = time.time()
-    if a.only in ("A","all"): expA(a.seeds)
-    if a.only in ("B","all"): expB(a.seeds)
-    if a.only in ("C","all"): expC(a.seeds)
-    if a.only in ("D","all"): expD(a.seeds)
-    if a.only in ("merge","all"): merge()
-    print(f"[{a.only}] done in {time.time()-t0:.1f}s")
+ 

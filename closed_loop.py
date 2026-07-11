@@ -56,14 +56,16 @@ def bstar(regime,rng,n=50000):
         if gap<=0.6: gap=GAP_INIT; v=lead[t]
     return float(np.quantile(Rs,1-TAU))
 
-def simulate(cond,leads,shift,rng,Bpre,Bpost,B0c,latency=0,loss=0.0,lat_ln=None,ge=None):
+def simulate(cond,leads,shift,rng,Bpre,Bpost,B0c,latency=0,loss=0.0,lat_ln=None,ge=None,ret_scores=False):
     K,T=leads.shape
     v=np.full(K,V_INIT); gap=np.full(K,GAP_INIT)
     win=np.full((K,NS),Bpre); B=np.full(K,Bpre); ptr=0; pend=[]; ge_state=0
     U=np.quantile(win,1-TAU,axis=1)
     interv=np.zeros((K,T)); coll=0; under=np.zeros(T); spd=np.zeros(T); conf=np.zeros(T)
+    Rlog=np.zeros((K,T)) if ret_scores else None
     for t in range(T):
         ld=leads[:,t]; dv=v-ld; R=risk(gap,v,dv)
+        if ret_scores: Rlog[:,t]=R
         with np.errstate(divide="ignore",invalid="ignore"):
             ttc=np.where(dv>0.1,gap/np.where(dv>0.1,dv,1.0),1e9)
         Bstar_t=np.where(t>=shift,Bpost,Bpre)
@@ -100,10 +102,12 @@ def simulate(cond,leads,shift,rng,Bpre,Bpost,B0c,latency=0,loss=0.0,lat_ln=None,
     post=slice(int(shift.max())+200,T)
     rate=np.array([np.mean(interv[k,post]) for k in range(K)])
     veh_steps=K*(T-int(shift.max()))/1000.0
-    return dict(coll=coll/max(veh_steps,1e-9), conflict=float(np.mean(conf[post])),
+    out=dict(coll=coll/max(veh_steps,1e-9), conflict=float(np.mean(conf[post])),
                 rate_err=float(np.mean(np.abs(rate-TAU))),
                 under_max=float(np.max(under[post])) if cond!="AEB" else np.nan,
                 speed=float(np.mean(spd[post])))
+    if ret_scores: out["scores_post"]=Rlog[:,post].ravel()
+    return out
 
 def ci(vals):
     v=np.array([x for x in vals if not(isinstance(x,float)and np.isnan(x))])
@@ -143,4 +147,3 @@ if __name__=="__main__":
         for k in acc: acc[k].append(m[k])
     res["v2x"]["realistic_lognormal+GE"]={k:ci(v) for k,v in acc.items()}
     c=res["v2x"]["realistic_lognormal+GE"]; print(f"V2X realistic(lognormal+GE bursty): coll/1k={c['coll'][0]:.3f} rate_err={c['rate_err'][0]:.4f} under={c['under_max'][0]:.4f}")
-    json.dump(res,open("results_real/closed_loop.json","w"),indent=2); print("saved")
