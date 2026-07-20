@@ -48,9 +48,8 @@
     ]
   },
   "bound": [
-    0.05601885800203057,
-    0.055746462467902005,
-    0.056296357856946554
-  ],
-  "_note": "ACI=online update no clamp; FEDNOCLAMP=standard mean aggregation as boundary, no local clamp; both under 30% adversarial. B1/P5 within bound."
+    0.09923786217588332,
+    0.09848645861373852,
+    0.0999014608828643
+  ]
 }

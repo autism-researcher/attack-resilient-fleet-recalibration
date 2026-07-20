@@ -172,7 +172,7 @@ def run_baselines(seeds=12, seed0=61):
         bnd.append(E.theoretical_bound(R, tc, p))
         for c in conds:
             am = adv if c in ("P5", "FEDNOCLAMP") else None
-            log = simulate_agg(c, R, Bs, tc, p, gen.rng, agg=agg_wquantile, adv_mask=am)
+            log = simulate_agg(c, R, Bs, tc, p, gen.rng, agg=(agg_mean if c=="FEDNOCLAMP" else agg_wquantile), adv_mask=am)
             m = E.metrics(log, st, p)
             out[c]["rate_err"].append(float(np.mean(m["rate_err"])))
             out[c]["under_max"].append(float(np.max(m["under_max"])))
