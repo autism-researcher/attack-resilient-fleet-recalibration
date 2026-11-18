@@ -1,0 +1,132 @@
+{
+  "Ns": 300,
+  "tau": 0.1,
+  "pairs": {
+    "highd->ngsim": {
+      "kind": "real",
+      "Bstar_pre": 0.3135,
+      "Bstar_post": 0.8492,
+      "two_sided_max": 0.5357,
+      "one_sided_max": 0.0001,
+      "two_sided_at_k": {
+        "0": 0.5357,
+        "50": 0.1844,
+        "100": 0.0517,
+        "150": 0.0284,
+        "200": 0.0139,
+        "250": 0.0054,
+        "270": 0.0034,
+        "300": 0.0001
+      },
+      "burn_in_k_for_rho_0.01": 221
+    },
+    "highd->waymo": {
+      "kind": "real",
+      "Bstar_pre": 0.3135,
+      "Bstar_post": 0.3754,
+      "two_sided_max": 0.0619,
+      "one_sided_max": 0.0001,
+      "two_sided_at_k": {
+        "0": 0.0619,
+        "50": 0.0524,
+        "100": 0.0436,
+        "150": 0.0329,
+        "200": 0.0204,
+        "250": 0.0096,
+        "270": 0.0066,
+        "300": 0.0001
+      },
+      "burn_in_k_for_rho_0.01": 249
+    },
+    "freeflow->congested": {
+      "kind": "controlled",
+      "Bstar_pre": 0.2651,
+      "Bstar_post": 0.4238,
+      "two_sided_max": 0.1586,
+      "one_sided_max": 0.0002,
+      "two_sided_at_k": {
+        "0": 0.1586,
+        "50": 0.1238,
+        "100": 0.0758,
+        "150": 0.0446,
+        "200": 0.0248,
+        "250": 0.0106,
+        "270": 0.0061,
+        "300": 0.0002
+      },
+      "burn_in_k_for_rho_0.01": 253
+    },
+    "freeflow->rain": {
+      "kind": "controlled",
+      "Bstar_pre": 0.2651,
+      "Bstar_post": 0.404,
+      "two_sided_max": 0.1388,
+      "one_sided_max": 0.0002,
+      "two_sided_at_k": {
+        "0": 0.1388,
+        "50": 0.1088,
+        "100": 0.071,
+        "150": 0.0428,
+        "200": 0.0243,
+        "250": 0.0108,
+        "270": 0.006,
+        "300": 0.0002
+      },
+      "burn_in_k_for_rho_0.01": 254
+    },
+    "freeflow->dense": {
+      "kind": "controlled",
+      "Bstar_pre": 0.2651,
+      "Bstar_post": 0.4699,
+      "two_sided_max": 0.2047,
+      "one_sided_max": 0.0001,
+      "two_sided_at_k": {
+        "0": 0.2047,
+        "50": 0.1532,
+        "100": 0.0799,
+        "150": 0.0457,
+        "200": 0.0254,
+        "250": 0.0112,
+        "270": 0.0062,
+        "300": 0.0001
+      },
+      "burn_in_k_for_rho_0.01": 255
+    },
+    "freeflow->night": {
+      "kind": "controlled",
+      "Bstar_pre": 0.2651,
+      "Bstar_post": 0.3355,
+      "two_sided_max": 0.0702,
+      "one_sided_max": 0.0,
+      "two_sided_at_k": {
+        "0": 0.0702,
+        "50": 0.0567,
+        "100": 0.0425,
+        "150": 0.0292,
+        "200": 0.0175,
+        "250": 0.008,
+        "270": 0.0047,
+        "300": 0.0
+      },
+      "burn_in_k_for_rho_0.01": 239
+    },
+    "freeflow->moderate": {
+      "kind": "controlled",
+      "Bstar_pre": 0.2651,
+      "Bstar_post": 0.3335,
+      "two_sided_max": 0.0682,
+      "one_sided_max": 0.0,
+      "two_sided_at_k": {
+        "0": 0.0682,
+        "50": 0.0555,
+        "100": 0.0417,
+        "150": 0.029,
+        "200": 0.0175,
+        "250": 0.008,
+        "270": 0.0045,
+        "300": 0.0
+      },
+      "burn_in_k_for_rho_0.01": 238
+    }
+  }
+}

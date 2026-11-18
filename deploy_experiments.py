@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Extended closed-loop experiments for TR-C reviewer strengthening.
+"""Extended closed-loop experiments (reviewer-strengthening battery).
 Reuses the EXACT primitives of closed_loop.py (risk, idm, build_leads, bstar,
 module constants) so numbers are consistent with the paper's closed loop.
 Adds: (a) ablation variants incl. B2 (clamp reads fleet, unsafe), robust-no-clamp,
@@ -25,7 +25,7 @@ def simulate(cond, leads, shift, rng, Bpre, Bpost, B0c,
     adv: fraction of vehicles that upload a maliciously inflated boundary (=> under-protect).
     stale: if >0, fleet estimate is deliberately reused with this many extra steps of delay.
     Returns transportation + calibration + safety metrics (all from this run)."""
-    K,T=leads.shape
+    K,T=leads.shape; CL.reset_risk()
     v=np.full(K,CL.V_INIT); gap=np.full(K,CL.GAP_INIT)
     win=np.full((K,Ns),Bpre); B=np.full(K,Bpre); ptr=0; pend=[]; ge_state=0
     U=np.quantile(win,1-tau,axis=1)

@@ -1,5 +1,5 @@
 """
-Extra experiments requested in TR-C forensic revision, run for real (no hardcoded
+Extra experiments added in the forensic revision, run for real (no hardcoded
 numbers):
 
   Experiment H  : five aggregators under a 30% Byzantine fraction -> bias, rate

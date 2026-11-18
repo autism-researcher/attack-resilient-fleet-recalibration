@@ -1,0 +1,74 @@
+{
+  "Ns": 300,
+  "m": 0.02,
+  "rho": 0.01,
+  "tolerance": 0.005,
+  "delta_step": 0.066636688637034,
+  "delta_sim": 0.16715495013509124,
+  "note": "During the first Ns post-shift steps the window law is Fbar_k = (1-k/Ns) F_pre + (k/Ns) F_post (k post-shift samples).\n    Retrospective envelope m + omega_{Fbar_k}(delta) + (Bbar_k - B*_post)_+ + rho for every k, per regime pair, per-step\n    (alpha = 0.05) and simultaneous (alpha = zeta/(K T) = 0.05/34000). k_star = first k after which every later mixed-window\n    envelope is within tol of the pure post-shift envelope.",
+  "pairs": {
+    "highd->ngsim": {
+      "post_env_step": 0.0654,
+      "transient_env_step_max": 0.3997,
+      "k_at_max_step": 21,
+      "k_star_step": 163,
+      "post_env_sim": 0.1189,
+      "transient_env_sim_max": 0.6528,
+      "k_star_sim": 255
+    },
+    "highd->waymo": {
+      "post_env_step": 0.1102,
+      "transient_env_step_max": 0.1124,
+      "k_at_max_step": 157,
+      "k_star_step": 0,
+      "post_env_sim": 0.3031,
+      "transient_env_sim_max": 0.3649,
+      "k_star_sim": 276
+    },
+    "freeflow->congested": {
+      "post_env_step": 0.0899,
+      "transient_env_step_max": 0.1157,
+      "k_at_max_step": 59,
+      "k_star_step": 190,
+      "post_env_sim": 0.3657,
+      "transient_env_sim_max": 0.524,
+      "k_star_sim": 275
+    },
+    "freeflow->rain": {
+      "post_env_step": 0.0894,
+      "transient_env_step_max": 0.1057,
+      "k_at_max_step": 68,
+      "k_star_step": 172,
+      "post_env_sim": 0.4183,
+      "transient_env_sim_max": 0.5568,
+      "k_star_sim": 276
+    },
+    "freeflow->dense": {
+      "post_env_step": 0.0922,
+      "transient_env_step_max": 0.1394,
+      "k_at_max_step": 46,
+      "k_star_step": 178,
+      "post_env_sim": 0.3317,
+      "transient_env_sim_max": 0.536,
+      "k_star_sim": 276
+    },
+    "freeflow->night": {
+      "post_env_step": 0.0809,
+      "transient_env_step_max": 0.0829,
+      "k_at_max_step": 146,
+      "k_star_step": 0,
+      "post_env_sim": 0.463,
+      "transient_env_sim_max": 0.5331,
+      "k_star_sim": 269
+    },
+    "freeflow->moderate": {
+      "post_env_step": 0.081,
+      "transient_env_step_max": 0.0833,
+      "k_at_max_step": 169,
+      "k_star_step": 0,
+      "post_env_sim": 0.4275,
+      "transient_env_sim_max": 0.4957,
+      "k_star_sim": 268
+    }
+  }
+}

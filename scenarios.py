@@ -32,6 +32,7 @@ def emergency(T,rng):
     return np.clip(v,1.0,30.0)
 
 def bstar_lead(fn,rng,n=15000):
+    cl.reset_risk()
     lead=fn(n,rng); v=cl.V_INIT; gap=cl.GAP_INIT; Rs=np.empty(n)
     for t in range(n):
         dv=v-lead[t]; Rs[t]=cl.risk(gap,v,dv)
@@ -52,4 +53,6 @@ for name,fn in [("cutin",cutin),("merge",merge),("emergency",emergency),("stopgo
             coll.append(cl.simulate(cond,leads,shift,r,Bp,Bp,B0c)["coll"])
         res[name][cond]=cl.ci(coll)
         print(f"{name:>7} {cond:>4}: coll/1k={res[name][cond][0]:.3f} {[round(x,3) for x in res[name][cond][1:]]}")
-json.dump(res,open("results_real/scenarios.json","w"),indent=2); print("saved")
+res["score"]="eight-feature" if cl.SCORE=="8" else "four-feature"
+_out="results_real/scenarios.json" if cl.SCORE=="8" else "results_real/scenarios_4feat.json"
+json.dump(res,open(_out,"w"),indent=2); print("saved",_out)

@@ -1,0 +1,100 @@
+{
+  "seeds": 30,
+  "alpha_step": 0.05,
+  "zeta": 0.05,
+  "real": {
+    "P5": {
+      "per_step_violation_fraction": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "max_per_step_violation_fraction_any_run": 0.0,
+      "simultaneous_event_held_in_runs": "30/30",
+      "true_run_max": [
+        0.0506956291746184,
+        0.048607134506304675,
+        0.05321520791571061
+      ],
+      "true_run_max_worst": 0.0664404423621327
+    },
+    "P5_adv30": {
+      "per_step_violation_fraction": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "max_per_step_violation_fraction_any_run": 0.0,
+      "simultaneous_event_held_in_runs": "30/30",
+      "true_run_max": [
+        0.05069370695528693,
+        0.048607134506304675,
+        0.05321333375186242
+      ],
+      "true_run_max_worst": 0.0664404423621327
+    },
+    "B2_adv30": {
+      "per_step_violation_fraction": [
+        0.00375542526867853,
+        0.003318165698429007,
+        0.004148686608928688
+      ],
+      "max_per_step_violation_fraction_any_run": 0.005847668242288388,
+      "simultaneous_event_held_in_runs": "30/30",
+      "true_run_max": [
+        0.16096233304286012,
+        0.15615260407458406,
+        0.16568227993947798
+      ],
+      "true_run_max_worst": 0.19202859612057277
+    }
+  },
+  "controlled": {
+    "P5": {
+      "per_step_violation_fraction": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "max_per_step_violation_fraction_any_run": 0.0,
+      "simultaneous_event_held_in_runs": "30/30",
+      "true_run_max": [
+        0.0475325384893718,
+        0.045941306135041694,
+        0.049063828831946384
+      ],
+      "true_run_max_worst": 0.05533412885830208
+    },
+    "P5_adv30": {
+      "per_step_violation_fraction": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "max_per_step_violation_fraction_any_run": 0.0,
+      "simultaneous_event_held_in_runs": "30/30",
+      "true_run_max": [
+        0.047530660795448015,
+        0.045941306135041694,
+        0.04906373494725019
+      ],
+      "true_run_max_worst": 0.05533412885830208
+    },
+    "B2_adv30": {
+      "per_step_violation_fraction": [
+        0.002523837960078371,
+        0.0021368327541308827,
+        0.002926125267989694
+      ],
+      "max_per_step_violation_fraction_any_run": 0.004917234664070107,
+      "simultaneous_event_held_in_runs": "30/30",
+      "true_run_max": [
+        0.13781287362156755,
+        0.13411214114512038,
+        0.14125039323939992
+      ],
+      "true_run_max_worst": 0.15439881506141595
+    }
+  },
+  "note": "Envelopes are retrospective: omega is computed from the realized post-shift law (certificates.json), which is not observable online. Per-step event: (B_eff - B*)_+ <= env_step at a single (i,t), nominal coverage 1 - alpha = 0.95. Simultaneous event: max over all (i,t) <= env_sim, nominal 1 - zeta = 0.95."
+}

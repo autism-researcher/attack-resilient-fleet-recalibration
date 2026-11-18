@@ -1,0 +1,21 @@
+{
+  "title": "Fleet-Assisted Risk-Threshold Recalibration with a Local Non-Bypass Guarantee for Connected Automated Vehicles: code and data",
+  "upload_type": "software",
+  "description": "Code, derived risk pools and result files for the manuscript 'Fleet-Assisted Risk-Threshold Recalibration with a Local Non-Bypass Guarantee for Connected Automated Vehicles'. Implements information-flow isolation: fleet information enters only the fast adaptation channel, while a strictly local window-quantile ceiling sets the runtime gate. v1.0.6 adds the Matched Local Self-Blending control, which separates the self-blending effect from the value of collaboration.",
+  "creators": [
+    {
+      "name": "Hossain, Mohammad Belayet",
+      "affiliation": "Dr. Hussein ElSayyed Research and Innovation Center, Deanship of Scientific Research, Innovation, and Graduate Studies, University of Prince Mugrin"
+    }
+  ],
+  "license": "MIT",
+  "keywords": [
+    "connected automated vehicles",
+    "safety supervision",
+    "conformal calibration",
+    "V2X",
+    "Byzantine robustness",
+    "reliability"
+  ],
+  "version": "1.0.6"
+}

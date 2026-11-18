@@ -1,0 +1,58 @@
+{
+  "KT": 34000,
+  "zeta": 0.05,
+  "alpha_q": 7.352941176470589e-07,
+  "alpha_dkw": 7.352941176470589e-07,
+  "by_window": {
+    "300": {
+      "delta_sim": 0.1729,
+      "eps_sim": 0.1571,
+      "env_sim_online": {
+        "ngsim": 0.282,
+        "waymo": 0.788,
+        "highd": 0.785,
+        "controlled": 0.781
+      }
+    },
+    "600": {
+      "delta_sim": 0.1064,
+      "eps_sim": 0.1111,
+      "env_sim_online": {
+        "ngsim": 0.239,
+        "waymo": 0.746,
+        "highd": 0.764,
+        "controlled": 0.744
+      }
+    },
+    "1000": {
+      "delta_sim": 0.0753,
+      "eps_sim": 0.0861,
+      "env_sim_online": {
+        "ngsim": 0.206,
+        "waymo": 0.699,
+        "highd": 0.737,
+        "controlled": 0.685
+      }
+    },
+    "2000": {
+      "delta_sim": 0.0482,
+      "eps_sim": 0.0609,
+      "env_sim_online": {
+        "ngsim": 0.198,
+        "waymo": 0.689,
+        "highd": 0.732,
+        "controlled": 0.673
+      }
+    },
+    "5000": {
+      "delta_sim": 0.0277,
+      "eps_sim": 0.0385,
+      "env_sim_online": {
+        "ngsim": 0.076,
+        "waymo": 0.132,
+        "highd": 0.079,
+        "controlled": 0.124
+      }
+    }
+  }
+}

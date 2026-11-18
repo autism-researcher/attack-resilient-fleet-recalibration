@@ -26,6 +26,7 @@ def run(cond, K, T, rng, equipped=None, entry=None):
     for k in range(K):
         e=entry[k]; leads[k,:e]=lead1(e,rng,"mild"); leads[k,e:]=lead1(T-e,rng,"aggr")
     Bpre=cl.bstar("mild",np.random.default_rng(1)); Bpost=cl.bstar("aggr",np.random.default_rng(2))
+    cl.reset_risk()
     v=np.full(K,V_INIT); gap=np.full(K,GAP_INIT)
     win=np.full((K,NS),Bpre); B=np.full(K,Bpre); ptr=0
     U=np.quantile(win,1-TAU,axis=1); fleet_hist=[]
@@ -61,10 +62,11 @@ def run(cond, K, T, rng, equipped=None, entry=None):
 
 K,T,SEEDS=20,2000,8
 out={}
-for cond in ["B1","P5"]:
+for cond in ["AEB","B1","P5"]:
     cps=[];cfr=[]
     for s in range(SEEDS):
         r=np.random.default_rng(700+s); a,b=run(cond,K,T,r); cps.append(a); cfr.append(b)
     out[cond]={"coll_per_1k":cl.ci(cps),"conflict":cl.ci(cfr)}
     c=out[cond]; print(f"{cond:>3}: transient coll/1k={c['coll_per_1k'][0]:.3f} [{c['coll_per_1k'][1]:.3f},{c['coll_per_1k'][2]:.3f}]  conflict={c['conflict'][0]:.4f}")
-json.dump(out,open("results_real/corridor.json","w"),indent=2)
+out["score"]="eight-feature" if cl.SCORE=="8" else "four-feature"
+json.dump(out,open("results_real/corridor.json" if cl.SCORE=="8" else "results_real/corridor_4feat.json","w"),indent=2)

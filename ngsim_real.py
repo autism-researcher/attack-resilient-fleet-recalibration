@@ -1,7 +1,7 @@
 """
 Real-NGSIM backend for the P5 study. Turns the public NGSIM vehicle-trajectory
 CSV into per-regime risk-score pools with REAL empirical matching boundaries,
-exposing the same interface as the NGSIM-calibrated generator so experiments
+exposing the same interface as the NGSIM-range-informed generator so experiments
 A-G run unchanged on real data.
 
 Regimes are defined directly from the data by binning each follower stream's

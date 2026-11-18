@@ -18,7 +18,7 @@ def arrow(x1,y1,x2,y2,lw=1.3):
     ax.add_patch(FancyArrowPatch((x1,y1),(x2,y2),arrowstyle="-|>",mutation_scale=15,lw=lw,color="black",shrinkA=2,shrinkB=2))
 
 # Tier 1: foundations
-box(3.25,8.0,5.6,1.15,"Controlled NGSIM-calibrated generator\nknown ground-truth $B^\\star$  $\\Rightarrow$  measures\nTRUE worst-case under-protection",serial=1,fc="0.90")
+box(3.25,8.0,5.6,1.15,"Controlled NGSIM-range-informed generator\nknown ground-truth $B^\\star$  $\\Rightarrow$  measures\nTRUE worst-case under-protection",serial=1,fc="0.90")
 box(9.25,8.0,5.6,1.15,"Real cross-dataset shift\nhighD / NGSIM / Waymo  ($B^\\star=0.31/0.38/0.85$)\nsevere, naturalistic distribution shift",serial=2,fc="0.90")
 # Tier 2: study battery
 y2=5.35

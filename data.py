@@ -3,7 +3,7 @@ Data layer. Two interchangeable sources emitting per-step kinematics
 (gap, v, dv) that risk_score() turns into R in [0,1]:
   (1) load_ngsim(csv): reads the public NGSIM trajectory CSV and reconstructs
       follower streams (REAL data path).
-  (2) RegimeGenerator: NGSIM-calibrated stochastic generator supporting
+  (2) RegimeGenerator: NGSIM-range-informed stochastic generator supporting
       controlled distribution shift and a known ground-truth matching boundary.
 """
 import numpy as np

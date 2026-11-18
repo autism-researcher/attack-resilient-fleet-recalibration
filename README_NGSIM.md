@@ -1,7 +1,7 @@
 # Running the P5 study on REAL NGSIM data
 
 This reproduces the full P5 evaluation (Experiments A–G) on real vehicle
-trajectories instead of the NGSIM-calibrated generator. You download the public
+trajectories instead of the NGSIM-range-informed generator. You download the public
 data once; the code does the rest.
 
 ## Step 1 — Download NGSIM (public, free)

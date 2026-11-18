@@ -10,8 +10,12 @@ import deploy_experiments as DX
 
 OUT=os.path.dirname(os.path.abspath(__file__))
 ACC=os.path.join(OUT,"results_real","_reviewer_accum.json")
-BS=json.load(open(os.path.join(OUT,"results_real","_bstar.json")))
-Bpre,Bpost=BS["Bpre"],BS["Bpost"]
+_BS=os.path.join(OUT,"results_real","_bstar.json" if os.environ.get("CL_SCORE","8")=="8" else "_bstar_4feat.json")
+if os.path.exists(_BS):
+    BS=json.load(open(_BS)); Bpre,Bpost=BS["Bpre"],BS["Bpost"]
+else:  # fresh clone: compute the closed-loop matching boundaries (same seeds as run_reviewer_experiments.cache_bstar)
+    import closed_loop as _CL
+    Bpre=_CL.bstar("mild",np.random.default_rng(1)); Bpost=_CL.bstar("aggr",np.random.default_rng(2))
 METRICS=["coll","conflict","rate_err","under_max","speed","unnec_interv",
          "missed_highrisk","hardbrake_freq","speed_disturb","thw_post","thw_after_interv"]
 

@@ -143,7 +143,7 @@ def merge():
     _save("summary", s); _print(s); return s
 
 def _figA(A):
-    fig, ax = plt.subplots(1, 2, figsize=(10, 4)); lab = {"B0":"B0 frozen","B1":"B1 local","B2":"B2 naive","P5":"P5 fleet"}; x = np.arange(len(CONDS))
+    fig, ax = plt.subplots(1, 2, figsize=(10, 4)); lab = {"B0":"Frozen","B1":"Local-only","B2":"Naive fleet-clamp","P5":"Proposed"}; x = np.arange(len(CONDS))
     for j, key, ttl in [(0,"rate_err","Intervention-rate error |rate-tau|"),(1,"missed","Missed high-risk events (rate)")]:
         m=[A[c][key][0] for c in CONDS]; lo=[A[c][key][0]-A[c][key][1] for c in CONDS]; hi=[A[c][key][2]-A[c][key][0] for c in CONDS]
         ax[j].bar(x, m, yerr=[lo,hi], capsize=4, color=["#b0b0b0","#6fa8dc","#e69138","#38761d"])
@@ -155,7 +155,7 @@ def _figB(latB):
     fig, ax = plt.subplots(figsize=(6,4))
     for c,col in [("B1","#6fa8dc"),("P5","#38761d")]:
         m=[latB[c][str(k)][0] for k in FLEETS_B]; lo=[latB[c][str(k)][1] for k in FLEETS_B]; hi=[latB[c][str(k)][2] for k in FLEETS_B]
-        ax.plot(FLEETS_B,m,"o-",color=col,label={"B1":"B1 local-only","P5":"P5 fleet"}[c]); ax.fill_between(FLEETS_B,lo,hi,color=col,alpha=0.2)
+        ax.plot(FLEETS_B,m,"o-",color=col,label={"B1":"Local-only","P5":"Proposed"}[c]); ax.fill_between(FLEETS_B,lo,hi,color=col,alpha=0.2)
     ax.set_xscale("log"); ax.set_xlabel("fleet size K"); ax.set_ylabel("adaptation latency (steps)")
     ax.set_title("Experiment B - adaptation latency vs fleet size"); ax.grid(alpha=0.3); ax.legend()
     fig.tight_layout(); fig.savefig(os.path.join(FIG, "expB_latency.png"), dpi=140); plt.close(fig)
@@ -165,8 +165,8 @@ def _figC(C):
     for off,key,lab,col,hatch in [(-w/2,"honest","honest fleet","#6fa8dc",None),(w/2,"adv","30% adversarial uploads","#e69138","//")]:
         m=[C[c][key][0] for c in conds]; lo=[C[c][key][0]-C[c][key][1] for c in conds]; hi=[C[c][key][2]-C[c][key][0] for c in conds]
         ax.bar(x+off,m,w,yerr=[lo,hi],capsize=3,label=lab,color=col,hatch=hatch,edgecolor="black",linewidth=.4)
-    b=C["theoretical_bound"][0]; ax.axhline(b,ls="--",color="#b8860b",label=f"certified bound = {b:.3f}")
-    ax.set_xticks(x); ax.set_xticklabels(["B1 local","B2 naive","P5 fleet"]); ax.set_ylabel("max under-protection (B_eff-B*)+")
+    b=C["theoretical_bound"][0]; ax.axhline(b,ls="--",color="#b8860b",label=f"per-step certified envelope = {b:.3f}")
+    ax.set_xticks(x); ax.set_xticklabels(["Local-only","Naive fleet-clamp","Proposed"]); ax.set_ylabel("max under-protection (B_eff-B*)+")
     ax.legend(fontsize=8); ax.set_title("Experiment C - safety under adversarial fleet uploads"); ax.grid(axis="y",alpha=0.3)
     fig.tight_layout(); fig.savefig(os.path.join(FIG, "expC_underprotection.png"), dpi=140); plt.close(fig)
 
@@ -174,7 +174,7 @@ def _figD(errD):
     fig, ax = plt.subplots(figsize=(6,4))
     for c,col in [("B1","#6fa8dc"),("P5","#38761d")]:
         m=[errD[c][str(k)][0] for k in FLEETS_D]; lo=[errD[c][str(k)][1] for k in FLEETS_D]; hi=[errD[c][str(k)][2] for k in FLEETS_D]
-        ax.plot(FLEETS_D,m,"o-",color=col,label={"B1":"B1 local-only","P5":"P5 fleet"}[c]); ax.fill_between(FLEETS_D,lo,hi,color=col,alpha=0.2)
+        ax.plot(FLEETS_D,m,"o-",color=col,label={"B1":"Local-only","P5":"Proposed"}[c]); ax.fill_between(FLEETS_D,lo,hi,color=col,alpha=0.2)
     Kstar=None
     for k in FLEETS_D:
         if errD["P5"][str(k)][0] <= 0.9*errD["B1"][str(k)][0]: Kstar=k; break
@@ -203,4 +203,14 @@ def _print(s):
 
 if __name__ == "__main__":
     warnings.filterwarnings("ignore")
+    ap = argparse.ArgumentParser(description="Experiments A-D (controlled generator, or --real for highD/NGSIM/Waymo pools)")
+    ap.add_argument("--seeds", type=int, default=15)
+    ap.add_argument("--only", default="all", help="A, B, C, D or all")
+    ap.add_argument("--real", action="store_true", help="use the real highD/NGSIM/Waymo risk pools (results_real/)")
+    a = ap.parse_args()
+    M = __import__("real_backend").patch() if a.real else __import__("experiments")
+    todo = ["A", "B", "C", "D"] if a.only == "all" else [a.only.upper()]
+    for w in todo:
+        getattr(M, "exp" + w)(a.seeds); print("Experiment", w, "done")
+    if a.only == "all": M.merge()
  

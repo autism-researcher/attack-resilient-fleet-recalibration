@@ -17,7 +17,9 @@ TTC_CRIT=1.5; SUP_DECEL=5.5
 REG={"mild":(0.022,11.0),"aggr":(0.065,21.0)}
 V_INIT,GAP_INIT,LEAD_BASE=26.0,22.0,27.0
 
-def risk(gap,v,dv):
+def risk4(gap,v,dv):
+    """Reduced four-feature score (inverse TTC, inverse THW, DRAC, speed; weights 0.32/0.26/0.26/0.16).
+    Used only for the four-feature ablation (CL_SCORE=4)."""
     gap=np.maximum(gap,0.1); appr=np.maximum(dv,0.0)
     with np.errstate(divide="ignore",invalid="ignore"):
         ttc=np.where(appr>1e-3,gap/np.where(appr>1e-3,appr,1.0),1e9)
@@ -28,6 +30,28 @@ def risk(gap,v,dv):
     f3=drac/4.0; f3=f3/(1+f3)
     f4=v/30.0; f4=f4/(1+f4)
     return np.clip(0.32*f1+0.26*f2+0.26*f3+0.16*f4,0,1)
+
+# ---- risk score used in closed loop: the eight-feature score of Eq. (1) (default) or the
+# ---- reduced four-feature ablation (set environment variable CL_SCORE=4).
+import os as _os
+SCORE = _os.environ.get("CL_SCORE", "8")
+_JS = {"v1": None, "a1": None}
+def reset_risk():
+    """Call at the start of every simulated episode (resets the jerk estimator)."""
+    _JS["v1"] = None; _JS["a1"] = None
+def risk8(gap,v,dv):
+    """Eight-feature score of Eq. (1) (risk_score.py); acceleration and jerk from finite differences of speed at DT."""
+    from risk_score import risk_score
+    va = np.asarray(v, float)
+    if _JS["v1"] is None or np.shape(_JS["v1"]) != np.shape(va):
+        a = np.zeros_like(va); j = np.zeros_like(va)
+    else:
+        a = (va - _JS["v1"]) / DT
+        j = np.zeros_like(va) if _JS["a1"] is None else (a - _JS["a1"]) / DT
+    _JS["v1"] = va.copy(); _JS["a1"] = a
+    return risk_score(gap, va, dv, jerk=j)
+def risk(gap,v,dv):
+    return risk8(gap,v,dv) if SCORE == "8" else risk4(gap,v,dv)
 
 def idm(v,gap,dv):
     s_star=S0+np.maximum(0.0,v*T_HW+v*dv/(2*np.sqrt(A_MAX*B_COMF)))
@@ -49,6 +73,7 @@ def build_leads(K,T,t0,stagger,rng):
     return leads,shift
 
 def bstar(regime,rng,n=50000):
+    reset_risk()
     lead=lead1(n,rng,regime); v=V_INIT; gap=GAP_INIT; Rs=np.empty(n)
     for t in range(n):
         dv=v-lead[t]; Rs[t]=risk(gap,v,dv)
@@ -57,6 +82,7 @@ def bstar(regime,rng,n=50000):
     return float(np.quantile(Rs,1-TAU))
 
 def simulate(cond,leads,shift,rng,Bpre,Bpost,B0c,latency=0,loss=0.0,lat_ln=None,ge=None,ret_scores=False):
+    reset_risk()
     K,T=leads.shape
     v=np.full(K,V_INIT); gap=np.full(K,GAP_INIT)
     win=np.full((K,NS),Bpre); B=np.full(K,Bpre); ptr=0; pend=[]; ge_state=0
@@ -122,7 +148,7 @@ if __name__=="__main__":
     B0c=np.full(a.K,Bpre)
     print(f"B*_pre(mild)={Bpre:.3f} B*_post(aggr)={Bpost:.3f}")
     res={"Bpre":Bpre,"Bpost":Bpost,"conditions":{},"v2x":{}}
-    for cond in ["AEB","B0","B1","FedAvg","P5"]:
+    for cond in ["AEB","B0","B1","FedAvg","RobFCP","P5"]:
         acc={m:[] for m in["coll","conflict","rate_err","under_max","speed"]}
         for s in range(a.seeds):
             r=np.random.default_rng(100+s); leads,shift=build_leads(a.K,a.T,a.T//3,a.T//4,r)
@@ -147,3 +173,7 @@ if __name__=="__main__":
         for k in acc: acc[k].append(m[k])
     res["v2x"]["realistic_lognormal+GE"]={k:ci(v) for k,v in acc.items()}
     c=res["v2x"]["realistic_lognormal+GE"]; print(f"V2X realistic(lognormal+GE bursty): coll/1k={c['coll'][0]:.3f} rate_err={c['rate_err'][0]:.4f} under={c['under_max'][0]:.4f}")
+    res["seeds"]=a.seeds
+    res["score"]="eight-feature" if SCORE=="8" else "four-feature"
+    out="results_real/closed_loop.json" if SCORE=="8" else "results_real/closed_loop_4feat.json"
+    json.dump(res,open(out,"w"),indent=2); print("saved",out)

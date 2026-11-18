@@ -1,4 +1,4 @@
-"""Reproduce the full P5 study (Experiments A-G) on REAL NGSIM data.
+"""Run Experiments A-D on streams re-derived from a raw NGSIM CSV (for Experiments E-G use experiments_efg.py).
 Usage:  python run_ngsim.py --csv path/to/NGSIM*.csv --seeds 15
 Outputs land in results_real/ and figures_real/."""
 import os, glob, argparse, warnings, numpy as np
@@ -31,11 +31,9 @@ def main():
     base = os.path.dirname(os.path.abspath(__file__))
     E.FIG = os.path.join(base, "figures_real"); E.RES = os.path.join(base, "results_real")
     os.makedirs(E.FIG, exist_ok=True); os.makedirs(E.RES, exist_ok=True)
-    import extra_experiments as X   # captures the real output dirs at import
 
-    print("\nrunning A-G on real data ...")
+    print("\nrunning A-D on real data ...")
     E.expA(a.seeds); E.expB(a.seeds); E.expC(a.seeds); E.expD(a.seeds)
-    X.expE(a.seeds); X.expF(a.seeds); X.expG(a.seeds)
     E.merge()
     print("\nDONE. Real-data results in results_real/, figures in figures_real/.")
 

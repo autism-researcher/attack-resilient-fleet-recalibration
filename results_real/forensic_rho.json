@@ -1,0 +1,76 @@
+{
+  "rhos": [
+    0.0,
+    0.01,
+    0.02,
+    0.05
+  ],
+  "laws": {
+    "controlled": {
+      "0.0": {
+        "env_step_retrospective": 0.0897,
+        "env_sim_retrospective": 0.4117,
+        "env_step_online_dkw": 0.6766
+      },
+      "0.01": {
+        "env_step_retrospective": 0.0997,
+        "env_sim_retrospective": 0.4217,
+        "env_step_online_dkw": 0.6866
+      },
+      "0.02": {
+        "env_step_retrospective": 0.1097,
+        "env_sim_retrospective": 0.4317,
+        "env_step_online_dkw": 0.6966
+      },
+      "0.05": {
+        "env_step_retrospective": 0.1397,
+        "env_sim_retrospective": 0.4617,
+        "env_step_online_dkw": 0.7266
+      }
+    },
+    "ngsim": {
+      "0.0": {
+        "env_step_retrospective": 0.0554,
+        "env_sim_retrospective": 0.109,
+        "env_step_online_dkw": 0.1953
+      },
+      "0.01": {
+        "env_step_retrospective": 0.0654,
+        "env_sim_retrospective": 0.119,
+        "env_step_online_dkw": 0.2053
+      },
+      "0.02": {
+        "env_step_retrospective": 0.0754,
+        "env_sim_retrospective": 0.129,
+        "env_step_online_dkw": 0.2153
+      },
+      "0.05": {
+        "env_step_retrospective": 0.1054,
+        "env_sim_retrospective": 0.159,
+        "env_step_online_dkw": 0.2453
+      }
+    },
+    "waymo": {
+      "0.0": {
+        "env_step_retrospective": 0.1003,
+        "env_sim_retrospective": 0.2931,
+        "env_step_online_dkw": 0.6877
+      },
+      "0.01": {
+        "env_step_retrospective": 0.1103,
+        "env_sim_retrospective": 0.3031,
+        "env_step_online_dkw": 0.6977
+      },
+      "0.02": {
+        "env_step_retrospective": 0.1203,
+        "env_sim_retrospective": 0.3131,
+        "env_step_online_dkw": 0.7077
+      },
+      "0.05": {
+        "env_step_retrospective": 0.1503,
+        "env_sim_retrospective": 0.3431,
+        "env_step_online_dkw": 0.7377
+      }
+    }
+  }
+}

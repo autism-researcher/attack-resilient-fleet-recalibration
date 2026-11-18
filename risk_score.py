@@ -5,7 +5,7 @@ DRAC, required deceleration, speed, closing speed, inverse spacing, jerk),
 each mapped into [0,1] by a saturating transform and combined by a fixed
 convex weight vector, so R(x) in [0,1] by construction and is monotone in
 danger. The same function is applied to real NGSIM rows and to the
-NGSIM-calibrated generator.
+NGSIM-range-informed generator.
 """
 import numpy as np
 

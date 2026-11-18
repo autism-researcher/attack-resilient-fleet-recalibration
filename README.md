@@ -1,126 +1,80 @@
-# Attack-Resilient Collaborative Recalibration of Safety Boundaries for CAVs
+# Fleet-Assisted Risk-Threshold Recalibration with a Local Non-Bypass Guarantee for Connected Automated Vehicles — code and data
 
-Reproducible code for the paper *"Attack-Resilient Collaborative Recalibration of
-Safety Boundaries for Connected Automated Vehicles"* (M. B. Hossain, M. A. S. Kamal,
-K. Yamada). It implements the information-flow-isolation scheme: fleet information is
-admitted only into a fast, rate-tracking boundary, while the runtime safety gate is
-clamped by a strictly local window-quantile boundary, so corrupted collaboration
-cannot weaken the per-vehicle under-protection bound.
+Reproducible code for the manuscript *"Fleet-Assisted Risk-Threshold Recalibration with a Local Non-Bypass Guarantee for Connected Automated Vehicles"* (M. B. Hossain), submitted to *Reliability Engineering & System Safety*.
+
+The code implements an information-flow-isolation scheme:
+- fleet information is admitted only into a fast, rate-tracking boundary;
+- the runtime safety gate is clamped by a strictly local window-quantile boundary.
+
+As a result, corrupted collaboration cannot raise the effective boundary above the local ceiling.
 
 ## Install
 ```bash
 python -m venv .venv
 # Windows: .venv\Scripts\activate    |    Linux/macOS: source .venv/bin/activate
-pip install -r requirements.txt
+pip install -r requirements-lock.txt   # exact versions used (Python 3.11); requirements.txt is the looser range
 ```
 
-## Quick demo (no licensed datasets required)
-The controlled study runs entirely on the built-in NGSIM-calibrated *generator* (synthetic streams with a known ground-truth boundary), so readers without licensed data can reproduce the core safety result end-to-end:
+`REPRODUCIBILITY.md` maps every table and figure of the manuscript to its command, seeds and output file.
+
+## Quick demo (no licensed data needed)
 ```bash
-pip install -r requirements.txt
-python experiments.py --seeds 5 --only C      # Experiment C: naive fleet-clamp's under-protection is larger; local clamp holds
-python make_figures_bw.py                      # rebuilds the figures from committed JSON
+python experiments.py --seeds 5 --only C        # controlled generator: naive fleet-clamp vs proposed under 30% corrupted uploads
 ```
-No highD/NGSIM/Waymo download is needed for this path; the real-corpus studies additionally use the derived `real/*.npy` pools already included.
 
-## Reproduce the results
+## Reproduce the results (release v1.0.5)
+All outputs are written to `results/` (controlled generator) and `results_real/` (highD/NGSIM/Waymo risk pools, closed loop).
+
 ```bash
-# 1) Controlled + real experiments -> results/*.json and results_real/*.json
-python experiments.py --seeds 15 --only all      # Experiments A-D
-python extra_experiments.py                       # clamp ablations, Byzantine (H), LDP (I)
-python closed_loop.py --seeds 12                  # closed-loop microsimulation
-python penetration.py ; python sens_tests.py ; python lowtau.py
-
-# 2) Regenerate all paper figures (black-and-white safe) into figures_bw/
-python make_figures_bw.py
+python experiments.py --seeds 15 --only all            # Experiments A-D, controlled generator   -> results/
+python experiments.py --seeds 15 --only all --real     # Experiments A-D, real risk pools          -> results_real/
+python experiments_efg.py --seeds 15 --real            # Experiments E-G (adv. sweep, period, shift heterogeneity) -> results_real/{E,F,G}.json
+python experiments_efg.py --seeds 15                   # Experiments E-G, controlled generator      -> results/{E,F,G}.json
+python closed_loop.py --seeds 12                        # closed-loop IDM+V2X microsimulation       -> results_real/closed_loop.json
+python extra_experiments.py                             # Byzantine aggregators (H), Laplace noise (I), clamp-free baselines
+python resampled_ablation.py ablation 30                # component ablation, real highD->NGSIM
+python resampled_ablation.py holdout 30                 # Waymo corpus-level holdout
+python certificates.py ; python exp_o_cert.py          # finite-sample certificates (authoritative)
+python lowtau.py ; python agnostic.py ; python sens_tests.py ; python penetration.py
+python corridor.py ; python scenarios.py ; python experiment_K.py ; python timing.py
+python run_reviewer_experiments.py --seeds 30           # 30-seed closed-loop battery (~20 min)
+python forensic_checks.py all                           # disjoint-halves replay, paired closed loop, downward attack, certificate coverage (Table S19)
+python make_figures_ress.py                             # all figures -> figures_ress/
 ```
-All headline numbers are written to committed JSON files, so figures/tables can be
-rebuilt without re-running the (stochastic) experiments.
+Every JSON in `results/` and `results_real/` in this release was produced by exactly these commands. `timing.json` is hardware-dependent.
 
-## Finite-sample certificates (`certificates.py`)
-`certificates.py` is the authoritative computation of the per-vehicle under-protection
-certificates. It recomputes, from the committed pools/generators, the corrected
-concentration constant and the per-step and run-level (simultaneous) envelopes reported
-in the paper:
-```bash
-python certificates.py        # -> results_real/certificates.json
-```
-The concentration analysis was corrected in the TR-C revision: (i) the two-sided
-Bernstein/Freedman deviation uses the **binding lower-tail variance**
-`v(delta) = (p-delta)(1-p+delta)` for `p = 1-tau >= 1/2` (the lower tail is nearer 1/2,
-so `q(1-q) > p(1-p)`), giving `delta = 0.067` (was 0.055); and (ii) the adapted
-(martingale) case evaluates the empirical CDF at the two fixed bracketing quantile
-levels only — **no score grid** — with predictable variance bounded by Jensen concavity.
-The quantile modulus `omega_F` is computed exactly from each realized law. Run-level
-maxima are compared to the simultaneous certificate (`alpha -> alpha/(KT)`), not the
-per-step envelope. These certificates are conservative worst-case guarantees, not tight
-operational margins; the observed under-protection is several-fold smaller.
-Corrected per-step / simultaneous envelopes: controlled 0.100 / 0.422; highD 0.070 / 0.313;
-NGSIM 0.065 / 0.119; Waymo 0.110 / 0.303; closed-loop 0.041 / 0.268.
-`exp_o_cert.py` computes the rare-event (low-tau) tail certificates of Experiment O.
-
-## Reviewer-strengthening experiments (TR-C revision)
-One command reproduces every new table — component ablation (which part secures safety),
-combined-fault deployment stress test, Waymo held-out generalization, named V2X fault
-grid, traffic-performance metrics, and parameter sensitivity:
-```bash
-python run_reviewer_experiments.py --seeds 30
-# optional: re-derive the NGSIM boundary end-to-end from your raw CSV
-python run_reviewer_experiments.py --seeds 30 \
-    --ngsim-csv "D:/New Paper3/paper3_pipeline/data/ngsim/ngsim_trajectories.csv"
-```
-New scripts:
-- `deploy_experiments.py` — extended closed-loop harness: ablation variants (naive
-  fleet-clamp, robust-no-clamp, robust/unweighted/shift-aware + clamp), adversarial
-  upload injection, named V2X faults, and full traffic metrics. Reproduces the main
-  closed loop **exactly** for AEB/B1.
-- `resampled_ablation.py` — real-pool component ablation (highD→NGSIM) + Waymo held-out
-  generalization (parameters fixed on highD/NGSIM, applied unchanged to Waymo).
-- `run_block.py` — resumable chunked driver (only needed on time-limited runners).
-
-Outputs: `results_real/reviewer_ablation.json`, `reviewer_waymo_holdout.json`,
-`reviewer_closedloop.json`.
-
-Key real findings: the **local clamp** secures safety (removing it — ACI — raises
-under-protection to ~3× the clamp-based scheme and outside the guarantee's scope; every
-clamp variant holds at 0.037–0.038 regardless of aggregator); under-protection is statistically **flat across 0–70% adversarial
-uploads**; P5 holds the bound under delay to 1 s, loss to 40%, stale, Byzantine, and
-mixed faults.
-
-### Real-corpus provenance
-- **highD** v1.0 — 60 recordings, 6 German highway sites, 25 Hz, 16.7 h, 110,516 vehicles (89,139 cars).
-- **NGSIM** — US-101 (2,847 vehicles) + I-80 (3,001), freeway, 10 Hz.
-- **Waymo** Open Dataset v1.2 — 45 segments.
-Each corpus is reduced to a pool of 5,000 per-trajectory maximum-risk (R_max) values
-(`real/{highd,ngsim,waymo}.npy`); B* = 0.313 / 0.375 / 0.849 (empirical (1−τ)-quantile, τ=0.10).
-
-## Paper <-> code map
+## Paper ↔ code map
 | Paper item | Script | Output |
 |---|---|---|
-| Risk score R(x) (8 features) | `risk_score.py` | — |
-| Local clamp + fleet aggregator + B0/B1/B2 baselines | `recalibration.py` | — |
-| Experiments A–D (accuracy, adaptation, safety, fleet size) | `experiments.py` | `results/*.json`, `figures/exp{A,B,C,D}*.png` |
-| Clamp ablation, Byzantine aggregators (H), LDP (I) | `extra_experiments.py` | `results_real/{baselines_extra,expH,expI_ldp}.json` |
-| Closed-loop microsimulation + V2X impairment | `closed_loop.py` | `results_real/closed_loop.json` |
-| Corridor hazard (M), scenarios, penetration (N) | `corridor.py`, `scenarios.py`, `penetration.py` | `results_real/*.json` |
-| Hyperparameter sensitivity (L), low-tau (O) | `sens_tests.py`, `lowtau.py` | `results_real/{sensitivity,lowtau}.json` |
-| Black-and-white-safe figures for the paper | `make_figures_bw.py` | `figures_bw/*.png` |
+| Risk score R(x) (8 features, Eq. 1) | `risk_score.py` | — |
+| Local clamp, fleet aggregator, baselines | `recalibration.py` | — |
+| Nominal / latency / adversarial / fleet-size studies (Tables 2, 4; Figs. S1–S2) | `experiments.py` | `results/{A,B,C,D}.json`, `results_real/{A,B,C,D}.json` |
+| Adversarial-fraction sweep (Fig. 2), aggregation period (Fig. S3), shift heterogeneity (Fig. S4) | `experiments_efg.py` | `results_real/{E,F,G}.json` |
+| Component ablation (Table 3), Waymo holdout | `resampled_ablation.py` | `results_real/reviewer_ablation.json`, `reviewer_waymo_holdout.json` |
+| Byzantine aggregators, Laplace noise, clamp-free baselines | `extra_experiments.py` | `results_real/{expH,expI_ldp,baselines_extra}.json` |
+| Closed loop (Table 5) | `closed_loop.py` | `results_real/closed_loop.json` |
+| Named V2X faults, combined-fault test, traffic metrics | `run_reviewer_experiments.py`, `deploy_experiments.py` | `results_real/reviewer_closedloop.json` |
+| Certificates, rare-event operation | `certificates.py`, `exp_o_cert.py`, `lowtau.py` | `results_real/{certificates,exp_o_certificates,lowtau}.json` |
+| Risk-score agnosticism, cross-domain fleet | `agnostic.py`, `experiment_K.py` | `results_real/{agnostic,experiment_K}.json` |
+| Sensitivity, penetration, corridor, scenarios | `sens_tests.py`, `penetration.py`, `corridor.py`, `scenarios.py` | `results_real/*.json` |
+| Additional checks (Table S19) | `forensic_checks.py` | `results_real/forensic_{split,closed_paired,downward,coverage}.json` |
+| Figures | `make_figures_ress.py` | `figures_ress/*.png` |
+
+## Legacy results
+`results_real/legacy/` keeps results committed in earlier releases, for transparency only:
+- `E.json`, `F.json`, `G.json`: superseded by `results_real/{E,F,G}.json`, regenerated by `experiments_efg.py` (the new runs agree with the legacy values to within seed noise);
+- `closed_hetero.json`: closed loop under heterogeneous shift; it has no generating script and is not used in the manuscript.
 
 ## Data
-The naturalistic corpora are public but under their own licenses and are **not**
-redistributed here:
+The naturalistic corpora are public but under their own licences and are **not** redistributed:
 - highD: https://www.highd-dataset.com
 - NGSIM (US-101/I-80): https://data.transportation.gov
 - Waymo Open Dataset: https://waymo.com/open
 
-`real/{highd,ngsim,waymo}.npy` contain only **derived** per-trajectory maximum-risk
-values (5000 scalars each) used to reconstruct the empirical risk distributions; they
-carry no raw trajectories. `data.py` reconstructs follower streams from a raw NGSIM CSV
-if you supply one (`--ngsim path/to/NGSIM.csv`).
+`real/{highd,ngsim,waymo}.npy` contain only **derived** per-trajectory maximum-risk values (5000 scalars per corpus), not raw trajectories. The matching boundaries are B* = 0.313 (highD), 0.375 (Waymo) and 0.849 (NGSIM) (empirical (1−τ)-quantile, τ = 0.10). `data.py` and `ngsim_real.py` rebuild streams from a raw NGSIM CSV if you supply one.
 
 ## Citation
-If you use this code, please cite the paper (see `CITATION` / the article once
-published).
+Please cite the manuscript and the Zenodo archive (concept DOI, always resolves to the latest version): https://doi.org/10.5281/zenodo.21288058
 
 ## License
-MIT (see `LICENSE`). Dataset licenses remain with their original providers.
+MIT (see `LICENSE`).

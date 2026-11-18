@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-One-command runner for the TR-C reviewer-strengthening experiments.
+One-command runner for the reviewer-strengthening experiments.
 Reproduces every new table (component ablation, deployment stress test,
 Waymo held-out, V2X fault grid, traffic metrics, sensitivity) from the
 committed code and the real risk pools. All numbers are produced by this run.
@@ -32,7 +32,7 @@ RES = os.path.join(OUT, "results_real"); os.makedirs(RES, exist_ok=True)
 def cache_bstar():
     Bpre = CL.bstar("mild", np.random.default_rng(1))
     Bpost = CL.bstar("aggr", np.random.default_rng(2))
-    json.dump({"Bpre": Bpre, "Bpost": Bpost}, open(os.path.join(RES, "_bstar.json"), "w"))
+    json.dump({"Bpre": Bpre, "Bpost": Bpost, "score": CL.SCORE}, open(os.path.join(RES, "_bstar.json" if CL.SCORE == "8" else "_bstar_4feat.json"), "w"))
     print(f"[bstar] B*_pre(mild)={Bpre:.3f}  B*_post(aggr)={Bpost:.3f}")
     return Bpre, Bpost
 
@@ -59,7 +59,7 @@ def run_closed_loop(seeds, Bpre, Bpost):
             acc[name] = rec
         print(f"[closed-loop] {blk} done ({seeds} seeds)")
     summ = {u: {m: ci(acc[u][m]) for m in METRICS} for u in acc}
-    json.dump(summ, open(os.path.join(RES, "reviewer_closedloop.json"), "w"), indent=2)
+    json.dump(summ, open(os.path.join(RES, "reviewer_closedloop.json" if CL.SCORE == "8" else "reviewer_closedloop_4feat.json"), "w"), indent=2)
     return summ
 
 def run_resampled(seeds):

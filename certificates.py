@@ -1,20 +1,23 @@
 #!/usr/bin/env python3
 """
-Authoritative finite-sample certificate constants for the P5 / TR-C paper.
+Authoritative finite-sample certificate constants for the fleet-recalibration paper.
 Resolves reviewer objections (1) binding LOWER-tail variance and (2) invalid
 deterministic score-grid argument.  See PROOF notes below.  Every number is
 computed from committed pools / generators -- nothing is hand-set.
 
-delta (explicit, conservative; valid for BOTH the i.i.d. (Bernstein) and the
-adapted-martingale (Freedman) regimes):
+delta (explicit, conservative; certified for the conditionally-i.i.d. window regime, Bernstein):
     delta = sqrt(2 v log(2/alpha)/Ns) + (2/3) log(2/alpha)/Ns ,
     v = v(delta) = max{(p-delta)(1-(p-delta)),(p+delta)(1-(p+delta))}
                  = (p-delta)(1-(p-delta))   for p>=1/2   (BINDING LOWER TAIL)
 solved as a fixed point.  Per-step alpha=0.05; simultaneous alpha->alpha/(K T).
 
-Adapted regime: evaluate the empirical CDF at the TWO fixed bracketing levels
-x=Fbar^{-1}(p+-delta) only (no grid).  Predictable variance is bounded by Jensen
-concavity: sum_s F_s(x)(1-F_s(x)) <= Ns*Fbar(x)(1-Fbar(x)) <= Ns*v(delta).
+Adapted (closed-loop) regime: NOT certified.  A Freedman argument would evaluate the
+empirical CDF at the bracketing levels x=Fbar^{-1}(p+-delta), but under closed-loop
+feedback these levels depend on the terminal window law, which is not predictable
+(see Supplementary S8, Remark).  The "closed" row below is therefore a reference
+number only; the manuscript reports closed-loop under-protection as empirical.
+Simultaneous certificates use K=20, T=1700 (T_DEFAULT) and zeta=0.05, i.e.
+alpha=zeta/(K T) ~ 1.5e-6, for the real and controlled laws.
 
 omega_F computed EXACTLY from each realized law via the generalized inverse.
 Envelope = m + omega_F(delta) + rho, m=0.02, rho=0.01.

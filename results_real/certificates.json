@@ -42,10 +42,10 @@
       "n": 647180,
       "KT": 60000,
       "delta_sim": 0.17189011619950428,
-      "env_step": 0.0414,
-      "env_sim": 0.2676,
-      "omega_step": 0.0114,
-      "omega_sim": 0.2376
+      "env_step": 0.0534,
+      "env_sim": 0.2287,
+      "omega_step": 0.0234,
+      "omega_sim": 0.1987
     }
   }
 }
